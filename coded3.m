@@ -85,18 +85,18 @@ while (norm_c>e) && (current_iter<max_iter)
 
     for k=1:n_states_aug
         % Inicialize expected marginal utility E(u')
-        expected_mu=zeros(n_assets,1);
+        expected_mu=zeros(n_assets,1); %10,000x1
 
         for j=1:n_states_aug
             
             % Next period assets on hand w2= a + exp(y_2)
-            w_next= a' + exp_y(j);
+            w_next= a' + exp_y(j); %10,000x1
             
             % Interpolation c_2(w_2) (as function of), pchip to preserve
             % curvature. pchip: (piecewise cubic Hermite) matches the 
             % slopes at the grid points and keeps the function shape 
             % monotone/convex where the data are convex.
-            c_next=interp1(w_specify(:,j), c_1(:,j), w_next, 'pchip', 'extrap');
+            c_next=interp1(w_specify(:,j), c_1(:,j), w_next, 'pchip', 'extrap'); % 10000x1
 
             % Specify utility function u'(c') if environemnt with
             % gamma.
@@ -106,35 +106,37 @@ while (norm_c>e) && (current_iter<max_iter)
                 prime_mu=c_next .^(-gamma);
             end % end if
            expected_mu= expected_mu + P_zero(k,j)*prime_mu; % E(u')=sum P*u'(c(w)) expected marginal utility of next-period consumption for current state
-        end % end for j
+        end % end for j %10,000x1
 
         % Invert euler where c =(u′)^(−1)[β(1 + r)Eu′(c′)]
         if gamma==1
-            c_inicial=1./(beta*(1+r)*expected_mu); % for log--> mu log = 1
+            c_inicial=1./(beta*(1+r)*expected_mu); % for log--> mu log = 1 %10,000x1
         else
             c_inicial=(beta*(1+r)*expected_mu).^(-1/gamma); % otherwise utility fucntion wth gamma
         end % end second if
 
 
  %%%%%%%%%%%%%%%%%%%%%%%%%% Back-out wi+1 = a/(1+r) +c^(i+1), from the period budget constraint.%%%%%%%%%%%%%%
-    w_inicial=a'/(1+r) + c_inicial;
+    w_inicial=a'/(1+r) + c_inicial; %10,000x1
 
     % map c(w_inicial) inot exogenous cash on hand grid
-    w_soln=w_specify(:,k);
-    c_soln=interp1(w_inicial,c_inicial,w_soln, 'pchip', 'extrap');
+    w_soln=w_specify(:,k); %10,000x1
+    c_soln=interp1(w_inicial,c_inicial,w_soln, 'pchip', 'extrap'); %10,000x1
 
-    % Consume all where w < smallest w_inicial: binding borowing constraint (bc)
-    w_min=w_inicial(1);
-    bc=(w_soln<=w_min);
-    c_soln(bc)=w_soln(bc);
+    %%% Consume all where w < smallest w_inicial: binding borowing
+    %%% constraint (bc) %%% NOTE: part e may be due to binding bc
+    % enduces curvature towards lower end of wages
+    w_min=w_inicial(1); %scalar 1x1
+    bc=(w_soln<=w_min); %10,000x1 logical
+    c_soln(bc)=w_soln(bc); %10,000X1
 
-    c_2(:,k)=c_soln;
+    c_2(:,k)=c_soln; % 10,000X2 DOUBLE
     end % end for k
 
 
     % Convergence check. c_norm is difference between c1 and c2
     norm_c=max(abs(c_2(:)-c_1(:)));
-    c_1=c_2;
+    c_1=c_2; % 10,000x2
     current_iter = current_iter+1;
 
 end % end while
