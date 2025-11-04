@@ -27,7 +27,7 @@ max_iter=10000; % Maximum number of iterations.
 amin=0; % -min(exp(Y(1)))/r; % Define asset a space.
 amax=100; % Large enough upperlimit for assets (arbitrary).
 n_assets= 10000; % Number of grid points.
-a=linspace(amin,amax,n_assets); % column --> transpose to row
+a=linspace(amin,amax,n_assets); % column 1x10,000--> transpose to row later
 
 
 %%%%%%%%%%%%Assignment mension%%%%%%%%%%%%%%%%%%%
@@ -42,12 +42,12 @@ a=linspace(amin,amax,n_assets); % column --> transpose to row
 % Assignment specifies that exiting unemployment goes to lowest employment state only.
 % Reorder (i.e. permute) P given by tauchen such that in order.
 [Y,order]= sort(Y(:),"ascend");
-P=P(order,order);
+P=P(order,order); %5x5
 
 % Unemployment augmentation.
 n_states_aug=n_employmentstates+1; % Include unemployment state into
 % existing employment state matrix ie become 6 states
-P_zero=zeros(n_states_aug,n_states_aug); % 6x6 matrix of zeros
+P_zero=zeros(n_states_aug,n_states_aug); % inicial 6x6 matrix of zeros
 % Define markov states employment to unemployment/employment
 for i=1:n_employmentstates
     P_zero(i,1:n_employmentstates)=(1-p_u)*P(i,:);
