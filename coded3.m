@@ -38,12 +38,6 @@ a=linspace(amin,amax,n_assets); % column 1x10,000--> transpose to row later
 % probability theory compatible way.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-% Order employment states smallest to largest.
-% Assignment specifies that exiting unemployment goes to lowest employment state only.
-% Reorder (i.e. permute) P given by tauchen such that in order.
-[Y,order]= sort(Y(:),"ascend");
-P=P(order,order); %5x5
-
 % Unemployment augmentation.
 n_states_aug=n_employmentstates+1; % Include unemployment state into
 % existing employment state matrix ie become 6 states
@@ -217,8 +211,7 @@ corrplot(data_matrix);
 % consumption functions with this utility function while the VFI 
 % consumption functions had curvature at the low end of assets.
 
-% With a negative natural borrowing limit, households are not able to 
-% borrow to smooth consumption in a bad state. The budget constraint is 
+% With a negative natural borrowing limit, the budget constraint is 
 % binding in that households must consume all cash on hand at low asset 
 % states. As such, when we set w = a + exp(y) and c = w, the consumption 
 % functions will be a linear upwards sloping line. Meanwhile, VFI searches 
